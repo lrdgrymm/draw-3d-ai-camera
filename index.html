@@ -2,8 +2,13 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#05070a">
   <title>Narest Draw 3D Uhuyy - AI Gesture Cyber-Painter</title>
+  <meta name="description" content="AI-powered 3D gesture drawing app. Use your hand gestures to paint in 3D space using your webcam.">
   
   <!-- Fonts: Share Tech Mono (Perfect for hacker UI) and Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,11 +26,22 @@
   <!-- Three.js OBJExporter via CDN for 3D export feature -->
   <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/exporters/OBJExporter.js"></script>
   
-  <!-- MediaPipe Hands & Camera Utils via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <!-- MediaPipe Hands & Camera Utils via CDN (stable legacy bundles) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
+  <!-- LANDSCAPE ORIENTATION PROMPT (Mobile only) -->
+  <div id="landscape-prompt">
+    <div class="landscape-content">
+      <div class="landscape-icon">📱</div>
+      <div class="landscape-arrow">↻</div>
+      <h2 class="landscape-title">ROTATE YOUR DEVICE</h2>
+      <p class="landscape-subtitle">For the best experience, please rotate your phone to <strong>landscape</strong> mode.</p>
+      <div class="landscape-tip">[LANDSCAPE_MODE_REQUIRED]</div>
+    </div>
+  </div>
 
   <!-- Cyber Scanline and Grid Noise Overlay -->
   <div class="cyber-scanlines"></div>

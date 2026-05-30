@@ -809,11 +809,102 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
   to { width: 100%; }
 }
 
-/* RESPONSIVE DOCK ADAPTATION */
+/* ---------------------------------------------------- */
+/* LANDSCAPE ORIENTATION PROMPT                         */
+/* ---------------------------------------------------- */
+#landscape-prompt {
+  display: none; /* Hidden by default on desktop */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--terminal-black);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.landscape-content {
+  text-align: center;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.landscape-icon {
+  font-size: 4rem;
+  animation: portrait-shake 1.5s ease-in-out infinite;
+}
+
+.landscape-arrow {
+  font-size: 3rem;
+  color: var(--matrix-green);
+  text-shadow: 0 0 20px rgba(0, 255, 102, 0.8);
+  animation: spin-cw 2s linear infinite;
+  display: inline-block;
+}
+
+.landscape-title {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  color: var(--matrix-green);
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+  letter-spacing: 3px;
+}
+
+.landscape-subtitle {
+  font-size: 0.9rem;
+  color: #8fa0b5;
+  max-width: 280px;
+  line-height: 1.6;
+}
+
+.landscape-subtitle strong {
+  color: var(--cyber-cyan);
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+}
+
+.landscape-tip {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: rgba(0, 255, 102, 0.4);
+  border: 1px solid rgba(0, 255, 102, 0.2);
+  padding: 6px 14px;
+  border-radius: 2px;
+  letter-spacing: 2px;
+}
+
+@keyframes portrait-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-15deg); }
+  40% { transform: rotate(15deg); }
+  60% { transform: rotate(-10deg); }
+  80% { transform: rotate(10deg); }
+}
+
+@keyframes spin-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Show landscape prompt ONLY on mobile in portrait mode */
+@media (max-width: 768px) and (orientation: portrait) {
+  #landscape-prompt {
+    display: flex;
+  }
+}
+
+/* ---------------------------------------------------- */
+/* RESPONSIVE DOCK ADAPTATION - TABLET                  */
+/* ---------------------------------------------------- */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 280px;
-    padding: 15px;
+    width: 260px;
+    padding: 14px;
     font-size: 0.9rem;
   }
   #camera-deck {
@@ -821,10 +912,200 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
     height: 135px;
   }
   #terminal-deck {
-    width: 300px;
+    width: 290px;
     height: 120px;
   }
   #btn-help-trigger {
-    right: 220px;
+    right: 210px;
   }
 }
+
+/* ---------------------------------------------------- */
+/* RESPONSIVE - MOBILE LANDSCAPE                        */
+/* ---------------------------------------------------- */
+@media (max-width: 900px) and (orientation: landscape) {
+  /* Sidebar becomes a thin collapsible strip */
+  .sidebar {
+    width: 200px;
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    padding: 10px;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  .brand-sub {
+    font-size: 0.6rem;
+  }
+
+  .sidebar-scrollable {
+    gap: 10px;
+  }
+
+  .section-title {
+    font-size: 0.68rem;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .tool-btn {
+    padding: 6px 3px;
+    font-size: 0.6rem;
+  }
+
+  .tool-btn i {
+    font-size: 0.85rem;
+  }
+
+  .shapes-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .shape-btn {
+    padding: 5px 2px;
+    font-size: 0.55rem;
+  }
+
+  .color-swatch {
+    width: 24px;
+    height: 24px;
+  }
+
+  .cyber-btn {
+    padding: 8px 12px;
+    font-size: 0.72rem;
+  }
+
+  .op-btn {
+    padding: 7px;
+    font-size: 0.68rem;
+  }
+
+  /* Camera deck: top-right, compact */
+  #camera-deck {
+    width: 150px;
+    height: 110px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .camera-header {
+    height: 22px;
+  }
+
+  .camera-title {
+    font-size: 0.55rem;
+  }
+
+  /* Terminal: bottom-right, compact */
+  #terminal-deck {
+    width: 230px;
+    height: 100px;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  /* Status bar: top center, smaller */
+  #gesture-status-bar {
+    top: 10px;
+    padding: 6px 14px;
+    gap: 8px;
+  }
+
+  .status-label {
+    font-size: 0.65rem;
+  }
+
+  .status-value {
+    font-size: 0.85rem;
+  }
+
+  /* Help button */
+  #btn-help-trigger {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+    top: 10px;
+    right: 170px;
+  }
+
+  /* Boot screen adjustments */
+  .boot-container {
+    padding: 16px;
+    max-width: 95vw;
+  }
+
+  .boot-title {
+    font-size: 1.4rem;
+  }
+
+  .gesture-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .gesture-item {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .gesture-icon {
+    font-size: 1.1rem;
+    width: 26px;
+  }
+
+  .gesture-desc strong,
+  .gesture-desc span {
+    font-size: 0.65rem;
+  }
+
+  .boot-log {
+    height: 80px;
+    font-size: 0.7rem;
+  }
+}
+
+/* Extra small landscape (phones like 667px wide) */
+@media (max-width: 700px) and (orientation: landscape) {
+  .sidebar {
+    width: 170px;
+    padding: 8px;
+  }
+
+  #camera-deck {
+    width: 130px;
+    height: 95px;
+  }
+
+  #terminal-deck {
+    width: 200px;
+    height: 90px;
+    font-size: 0.62rem;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .tool-btn span {
+    display: none; /* hide text labels, keep icons only */
+  }
+
+  .tool-btn {
+    padding: 7px 4px;
+  }
+
+  #btn-help-trigger {
+    right: 148px;
+  }
+}
+

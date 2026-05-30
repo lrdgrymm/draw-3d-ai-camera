@@ -1228,44 +1228,92 @@ function setupAIHandTracker() {
   logToTerminal('MOUNTING CAMERA FEED TO NEURAL PORT...', 'info');
 
   const hands = new Hands({
-    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${file}`
   });
 
   hands.setOptions({
     maxNumHands: 1,
     modelComplexity: 1,
-    minDetectionConfidence: 0.6,
-    minTrackingConfidence: 0.6
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
   });
 
   hands.onResults(processHandTracking);
 
-  // Bind camera frame listener loop
-  cameraTracker = new Camera(videoElement, {
-    onFrame: async () => {
-      // Dynamically align skeletal overlay resolution to stream size
-      if (canvasElement.width !== videoElement.videoWidth) {
-        canvasElement.width = videoElement.videoWidth;
-        canvasElement.height = videoElement.videoHeight;
-        logToTerminal(`CALIBRATED: OVERLAY_RESOLUTION_MATCHED [${canvasElement.width}x${canvasElement.height}]`, 'success');
-      }
-      
-      await hands.send({ image: videoElement });
-    },
-    width: 640,
-    height: 480
-  });
+  // Detect if mobile for camera facing mode
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  cameraTracker.start()
-    .then(() => {
-      logToTerminal('CAMERA_STREAM CONNECTED. AI TRACKER ONLINE.', 'success');
-      updateGestureStatus('IDLE');
-    })
-    .catch((err) => {
-      logToTerminal(`CAMERA MOUNT FAILED: ${err.message}`, 'warn');
-      alert('Gagal mengakses Kamera Webcam! Silakan izinkan akses kamera di browser Anda.');
-      updateGestureStatus('OFFLINE');
+  // Try to start camera using MediaPipe Camera utility first
+  function startWithMediaPipeCamera() {
+    cameraTracker = new Camera(videoElement, {
+      onFrame: async () => {
+        // Dynamically align skeletal overlay resolution to stream size
+        if (canvasElement.width !== videoElement.videoWidth) {
+          canvasElement.width = videoElement.videoWidth;
+          canvasElement.height = videoElement.videoHeight;
+          logToTerminal(`CALIBRATED: OVERLAY_RESOLUTION_MATCHED [${canvasElement.width}x${canvasElement.height}]`, 'success');
+        }
+        
+        await hands.send({ image: videoElement });
+      },
+      width: 640,
+      height: 480,
+      facingMode: isMobile ? 'user' : 'user'
     });
+
+    cameraTracker.start()
+      .then(() => {
+        logToTerminal('CAMERA_STREAM CONNECTED. AI TRACKER ONLINE.', 'success');
+        updateGestureStatus('IDLE');
+      })
+      .catch((err) => {
+        logToTerminal(`CAMERA UTILITY FAILED: ${err.message}. TRYING FALLBACK...`, 'warn');
+        startWithFallback();
+      });
+  }
+
+  // Fallback: use getUserMedia directly then send frames manually
+  function startWithFallback() {
+    const constraints = {
+      video: {
+        facingMode: 'user',
+        width: { ideal: 640 },
+        height: { ideal: 480 }
+      },
+      audio: false
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then((stream) => {
+        videoElement.srcObject = stream;
+        videoElement.play();
+        logToTerminal('FALLBACK CAMERA STREAM ACTIVE. BINDING TRACKER...', 'info');
+        
+        // Send frames manually
+        const sendFrame = async () => {
+          if (videoElement.readyState >= 2) {
+            if (canvasElement.width !== videoElement.videoWidth && videoElement.videoWidth > 0) {
+              canvasElement.width = videoElement.videoWidth;
+              canvasElement.height = videoElement.videoHeight;
+              logToTerminal(`CALIBRATED: FALLBACK_RESOLUTION [${canvasElement.width}x${canvasElement.height}]`, 'success');
+            }
+            await hands.send({ image: videoElement });
+          }
+          requestAnimationFrame(sendFrame);
+        };
+        sendFrame();
+        
+        logToTerminal('FALLBACK TRACKER ONLINE. HAND DETECTION ACTIVE.', 'success');
+        updateGestureStatus('IDLE');
+      })
+      .catch((err) => {
+        logToTerminal(`CAMERA MOUNT FAILED: ${err.message}`, 'warn');
+        alert('Gagal mengakses Kamera! Pastikan:\n1. Izinkan akses kamera di browser\n2. Gunakan HTTPS (bukan HTTP)\n3. Tidak ada aplikasi lain yang menggunakan kamera');
+        updateGestureStatus('OFFLINE');
+      });
+  }
+
+  startWithMediaPipeCamera();
 }
 
 // ----------------------------------------------------
