@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Narest Draw 3D Uhuyy - AI Gesture Cyber-Painter</title>
+  
+  <!-- Fonts: Share Tech Mono (Perfect for hacker UI) and Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Cyber Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Three.js (3D Graphic Engine) via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Three.js OBJExporter via CDN for 3D export feature -->
+  <script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/exporters/OBJExporter.js"></script>
+  
+  <!-- MediaPipe Hands & Camera Utils via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- Cyber Scanline and Grid Noise Overlay -->
+  <div class="cyber-scanlines"></div>
+  <div class="cyber-noise"></div>
+
+  <!-- 1. HACKING BOOT ONBOARDING SCREEN -->
+  <div id="boot-screen" class="boot-screen">
+    <div class="boot-container glass-panel">
+      <div class="boot-header">
+        <span class="terminal-prompt">$</span> <span>SYS_BOOT_SEQUENCE: NAREST DRAW 3D UHUYY</span>
+      </div>
+      <div class="boot-content">
+        <h1 class="boot-title">NAREST DRAW 3D <span class="neon-glow-green">UHUYY</span></h1>
+        <p class="boot-subtitle">GESTURE-BASED 3D PAINTING DECK [v1.0.0-BETA]</p>
+        
+        <div class="boot-log" id="boot-log">
+          <p class="log-line">> INITIALIZING NEURAL_NET_PIPELINE...</p>
+          <p class="log-line">> LOADING THREE.JS GRAPHIC CORE... [OK]</p>
+          <p class="log-line">> COMPILING GESTURE_RECOGNITION_ALGORITHMS... [OK]</p>
+          <p class="log-line">> WAITING FOR USER AUTHORIZATION TO MOUNT WEBCAM_SENSOR...</p>
+        </div>
+        
+        <div class="gesture-cheat-sheet">
+          <h3>[GESTURE_PROTOCOLS]</h3>
+          <div class="gesture-grid">
+            <div class="gesture-item">
+              <i class="fa-solid fa-fingerprint gesture-icon cyan"></i>
+              <div class="gesture-desc">
+                <strong>DRAW MODE:</strong>
+                <span>Angkat 1 Jari (Telunjuk) untuk melukis 3D</span>
+              </div>
+            </div>
+            <div class="gesture-item">
+              <i class="fa-solid fa-expand-arrows-alt gesture-icon magenta"></i>
+              <div class="gesture-desc">
+                <strong>ZOOM MODE:</strong>
+                <span>Cubit Jempol + Telunjuk. Dekatkan/Jauhkan jarak untuk Zoom</span>
+              </div>
+            </div>
+            <div class="gesture-item">
+              <i class="fa-solid fa-rotate gesture-icon green"></i>
+              <div class="gesture-desc">
+                <strong>ROTATE 360°:</strong>
+                <span>Angkat 4 Jari (Telunjuk-Kelingking) lalu geser untuk memutar Grid</span>
+              </div>
+            </div>
+            <div class="gesture-item">
+              <i class="fa-solid fa-hand gesture-icon yellow"></i>
+              <div class="gesture-desc">
+                <strong>HOVER MODE:</strong>
+                <span>Buka telapak tangan (5 jari) untuk melacak pointer saja</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-init-system" class="cyber-btn neon-border-green">
+          <i class="fa-solid fa-terminal"></i> INITIALIZE_SYSTEM_DECK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MAIN 3D APPLICATION LAYOUT -->
+  <div id="app-container" class="hidden">
+    
+    <!-- Three.js Viewport -->
+    <div id="canvas-container"></div>
+
+    <!-- Active Gesture Status Bar -->
+    <div id="gesture-status-bar" class="glass-panel">
+      <span class="status-label">STATUS:</span>
+      <span id="active-status" class="status-value status-idle">WAITING_FOR_SYS_MOUNT</span>
+    </div>
+
+    <!-- HUD SIDEBAR (Cyber-Deck Controls) -->
+    <aside class="sidebar glass-panel">
+      <div class="brand">
+        <h2 class="brand-title">NAREST_DRAW_3D</h2>
+        <span class="brand-sub">UHUYY_DECK_v1.0</span>
+      </div>
+
+      <div class="sidebar-scrollable">
+        <!-- TOOLS DECK -->
+        <section class="hud-section">
+          <div class="section-title">
+            <i class="fa-solid fa-sliders"></i> [TOOLS_DECK]
+          </div>
+          <div class="tools-grid">
+            <button class="tool-btn active" data-tool="pen">
+              <i class="fa-solid fa-pen-nib"></i>
+              <span>PULPEN</span>
+            </button>
+            <button class="tool-btn" data-tool="marker">
+              <i class="fa-solid fa-marker"></i>
+              <span>SPIDOL</span>
+            </button>
+            <button class="tool-btn" data-tool="brush">
+              <i class="fa-solid fa-paint-brush"></i>
+              <span>KUAS</span>
+            </button>
+            <button class="tool-btn" data-tool="shape">
+              <i class="fa-solid fa-shapes"></i>
+              <span>SHAPES</span>
+            </button>
+            <button class="tool-btn" data-tool="eraser">
+              <i class="fa-solid fa-eraser"></i>
+              <span>ERASER</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- SHAPES CONFIG (Hidden until tool="shape") -->
+        <section id="shape-config-section" class="hud-section hidden">
+          <div class="section-title">
+            <i class="fa-solid fa-cube"></i> [SHAPE_LIBRARY]
+          </div>
+          <div class="shapes-grid">
+            <button class="shape-btn active" data-shape="sphere">
+              <i class="fa-solid fa-circle"></i>
+              <span>SPHERE</span>
+            </button>
+            <button class="shape-btn" data-shape="box">
+              <i class="fa-solid fa-cube"></i>
+              <span>BOX</span>
+            </button>
+            <button class="shape-btn" data-shape="torus">
+              <i class="fa-solid fa-ring"></i>
+              <span>TORUS</span>
+            </button>
+            <button class="shape-btn" data-shape="cone">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>CONE</span>
+            </button>
+            <button class="shape-btn" data-shape="goblin" title="Spawn Low-Poly Goblin character">
+              <i class="fa-solid fa-mask"></i>
+              <span>GOBLIN</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- COLOR SPECTRUM DECK -->
+        <section class="hud-section">
+          <div class="section-title">
+            <i class="fa-solid fa-palette"></i> [COLOR_DECK]
+          </div>
+          <div class="colors-grid">
+            <button class="color-swatch active color-green" data-color="#00ff66" title="Matrix Green"></button>
+            <button class="color-swatch color-cyan" data-color="#00f0ff" title="Cyber Cyan"></button>
+            <button class="color-swatch color-magenta" data-color="#ff007f" title="Hot Magenta"></button>
+            <button class="color-swatch color-yellow" data-color="#ffd700" title="Acid Yellow"></button>
+            <button class="color-swatch color-white" data-color="#ffffff" title="Terminal White"></button>
+          </div>
+          <div class="custom-color-picker">
+            <label for="color-picker-input">CUSTOM_HEX:</label>
+            <div class="picker-wrapper">
+              <input type="color" id="color-picker-input" value="#00ff66">
+              <span id="color-hex-label">#00ff66</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- BRUSH THICKNESS DOCK -->
+        <section class="hud-section">
+          <div class="section-title">
+            <i class="fa-solid fa-ruler-horizontal"></i> [STYLUS_SIZE]
+          </div>
+          <div class="slider-container">
+            <input type="range" id="brush-size-slider" min="2" max="60" value="15" class="cyber-slider">
+            <div class="slider-labels">
+              <span>MIN</span>
+              <span id="brush-size-val">15px</span>
+              <span>MAX</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- SYSTEM OPERATIONS -->
+      <section class="hud-section operations-dock">
+        <button id="btn-undo" class="cyber-btn op-btn" title="Revert Last Action">
+          <i class="fa-solid fa-rotate-left"></i> REVERT_LAST
+        </button>
+        <button id="btn-clear" class="cyber-btn op-btn alert-border" title="Purge Virtual Memory">
+          <i class="fa-solid fa-trash-alt"></i> PURGE_CANVAS
+        </button>
+        <button id="btn-export" class="cyber-btn op-btn neon-border-green" title="Export drawing to 3D OBJ file">
+          <i class="fa-solid fa-file-export"></i> EXPORT_3D_OBJ
+        </button>
+      </section>
+    </aside>
+
+    <!-- FLOATING CAMERA PREVIEW DECK -->
+    <div id="camera-deck" class="glass-panel">
+      <div class="camera-header">
+        <span class="pulse-indicator"></span>
+        <span class="camera-title">[CAMERA_FEED_LIVE]</span>
+      </div>
+      <div class="video-wrapper">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="skeleton-canvas"></canvas>
+      </div>
+    </div>
+
+    <!-- TERMINAL DIGITAL OUTPUT LOG -->
+    <div id="terminal-deck" class="glass-panel">
+      <div class="terminal-header">
+        <span class="terminal-title"><i class="fa-solid fa-code"></i> TELEMETRY_CONSOLE_LOG</span>
+      </div>
+      <div id="terminal-output" class="terminal-output">
+        <p class="term-line">> DECK ONLINE. STANDING BY FOR HAND_SIGNALS...</p>
+      </div>
+    </div>
+
+    <!-- HELP DIALOG OVERLAY TOGGLER -->
+    <button id="btn-help-trigger" class="glass-panel" title="System Protocols Help">
+      <i class="fa-solid fa-circle-question"></i>
+    </button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

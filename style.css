@@ -1,0 +1,830 @@
+/* 
+  NAREST DRAW 3D UHUYY - Theme Stylesheet (Semi-Hacker / Cyber-Terminal Aesthetic)
+*/
+
+:root {
+  --terminal-black: #05070a;
+  --terminal-dark: #0c0f16;
+  --terminal-gray: #161c27;
+  --terminal-white: #e1e8f5;
+  --matrix-green: #00ff66;
+  --cyber-cyan: #00f0ff;
+  --hot-magenta: #ff007f;
+  --laser-yellow: #ffd700;
+  --danger-red: #ff3366;
+  
+  --glass-bg: rgba(8, 12, 19, 0.75);
+  --glass-border: 1px solid rgba(0, 255, 102, 0.25);
+  --glass-border-cyan: 1px solid rgba(0, 240, 255, 0.25);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.85);
+  
+  --font-mono: 'Share Tech Mono', 'JetBrains Mono', monospace;
+  --font-sans: 'Outfit', sans-serif;
+  
+  --transition-speed: 0.25s;
+}
+
+/* Base resets & styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--terminal-black);
+  color: var(--terminal-white);
+  font-family: var(--font-sans);
+}
+
+/* Monospace overrides for hacker feel */
+h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span, .shape-btn span, .custom-color-picker, .slider-labels, .camera-title {
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
+}
+
+/* Neon Glow Utilities */
+.neon-glow-green {
+  color: var(--matrix-green);
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.8), 0 0 20px rgba(0, 255, 102, 0.3);
+}
+
+.neon-glow-cyan {
+  color: var(--cyber-cyan);
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+.neon-border-green {
+  border: 1px solid var(--matrix-green) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.2), inset 0 0 10px rgba(0, 255, 102, 0.1);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------------------------------------------------- */
+/* CYBER EFFECTS & SCREEN OVERLAYS                      */
+/* ---------------------------------------------------- */
+.cyber-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.2) 50%
+  ), linear-gradient(
+    90deg, 
+    rgba(0, 255, 102, 0.01), 
+    rgba(0, 240, 255, 0.005), 
+    rgba(255, 0, 127, 0.01)
+  );
+  background-size: 100% 4px, 6px 100%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.cyber-noise {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(0, 255, 102, 0.01) 1px, transparent 0);
+  background-size: 24px 24px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Glassmorphism Panel Template */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 4px; /* Hacker UI likes sharper, industrial corners */
+}
+
+/* ---------------------------------------------------- */
+/* 1. ONBOARDING BOOT SCREEN                            */
+/* ---------------------------------------------------- */
+.boot-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--terminal-black);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.boot-container {
+  width: 100%;
+  max-width: 750px;
+  padding: 30px;
+  border-color: rgba(0, 255, 102, 0.4);
+}
+
+.boot-header {
+  border-bottom: var(--glass-border);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  color: var(--matrix-green);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  display: flex;
+  gap: 8px;
+}
+
+.terminal-prompt {
+  animation: pulse-terminal 1s infinite alternate;
+}
+
+.boot-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+  letter-spacing: 2px;
+}
+
+.boot-subtitle {
+  font-size: 0.85rem;
+  color: #5d6e85;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed rgba(225, 232, 245, 0.1);
+  padding-bottom: 15px;
+}
+
+.boot-log {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(225, 232, 245, 0.1);
+  padding: 15px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: #92b0c9;
+  height: 120px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.log-line {
+  white-space: nowrap;
+  overflow: hidden;
+  animation: typing-log 0.15s steps(40, end);
+}
+
+.gesture-cheat-sheet {
+  margin-bottom: 25px;
+}
+
+.gesture-cheat-sheet h3 {
+  font-size: 0.9rem;
+  color: var(--cyber-cyan);
+  margin-bottom: 12px;
+}
+
+.gesture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.gesture-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(22, 28, 39, 0.4);
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(225, 232, 245, 0.05);
+}
+
+.gesture-icon {
+  font-size: 1.5rem;
+  width: 36px;
+  display: flex;
+  justify-content: center;
+}
+
+.gesture-icon.cyan { color: var(--cyber-cyan); }
+.gesture-icon.magenta { color: var(--hot-magenta); }
+.gesture-icon.green { color: var(--matrix-green); }
+.gesture-icon.yellow { color: var(--laser-yellow); }
+
+.gesture-desc {
+  display: flex;
+  flex-direction: column;
+}
+
+.gesture-desc strong {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  color: var(--terminal-white);
+  margin-bottom: 2px;
+  font-family: var(--font-mono);
+}
+
+.gesture-desc span {
+  font-size: 0.75rem;
+  color: #8fa0b5;
+}
+
+.cyber-btn {
+  background: transparent;
+  color: var(--terminal-white);
+  border: 1px solid rgba(225, 232, 245, 0.2);
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1rem;
+  transition: all var(--transition-speed) ease;
+  width: 100%;
+}
+
+.cyber-btn:hover {
+  background: rgba(0, 255, 102, 0.15);
+  color: var(--matrix-green);
+  box-shadow: 0 0 15px rgba(0, 255, 102, 0.4), inset 0 0 5px rgba(0, 255, 102, 0.1);
+  transform: translateY(-2px);
+}
+
+.cyber-btn:active {
+  transform: translateY(1px);
+}
+
+/* ---------------------------------------------------- */
+/* 2. MAIN SYSTEM LAYOUT                                */
+/* ---------------------------------------------------- */
+#app-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+}
+
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+}
+
+/* Gesture Status HUD */
+#gesture-status-bar {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-color: rgba(0, 240, 255, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);
+}
+
+.status-label {
+  font-size: 0.8rem;
+  color: #5d6e85;
+  font-weight: 600;
+}
+
+.status-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-shadow: 0 0 8px currentColor;
+}
+
+.status-idle { color: #8fa0b5; }
+.status-draw { color: var(--matrix-green); animation: pulse-neon-green 1.5s infinite; }
+.status-zoom { color: var(--hot-magenta); animation: pulse-neon-magenta 1.5s infinite; }
+.status-rotate { color: var(--cyber-cyan); animation: pulse-neon-cyan 1.5s infinite; }
+.status-hover { color: var(--laser-yellow); }
+
+/* ---------------------------------------------------- */
+/* HUD SIDEBAR (Controls Panel)                         */
+/* ---------------------------------------------------- */
+.sidebar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  bottom: 20px;
+  width: 320px;
+  z-index: 100;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.brand {
+  border-bottom: 1px solid rgba(0, 255, 102, 0.15);
+  padding-bottom: 12px;
+  margin-bottom: 5px;
+}
+
+.brand-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--matrix-green);
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+}
+
+.brand-sub {
+  font-size: 0.75rem;
+  color: #5d6e85;
+}
+
+.sidebar-scrollable {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Custom Scrollbar for Hacker HUD */
+.sidebar-scrollable::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scrollable::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scrollable::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 102, 0.2);
+  border-radius: 2px;
+}
+.sidebar-scrollable::-webkit-scrollbar-thumb:hover {
+  background: var(--matrix-green);
+}
+
+.hud-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--cyber-cyan);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px dashed rgba(0, 240, 255, 0.15);
+  padding-bottom: 4px;
+}
+
+/* Tools Selection UI */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.tool-btn {
+  background: rgba(12, 16, 22, 0.6);
+  border: 1px solid rgba(225, 232, 245, 0.1);
+  padding: 10px 5px;
+  color: #8fa0b5;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.tool-btn i {
+  font-size: 1.1rem;
+}
+
+.tool-btn:hover {
+  color: var(--matrix-green);
+  border-color: rgba(0, 255, 102, 0.4);
+  background: rgba(0, 255, 102, 0.05);
+}
+
+.tool-btn.active {
+  color: var(--matrix-green);
+  border-color: var(--matrix-green);
+  background: rgba(0, 255, 102, 0.15);
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
+}
+
+/* Shapes Sub-Menu Grid */
+.shapes-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+}
+
+.shape-btn {
+  background: rgba(12, 16, 22, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.1);
+  padding: 8px 3px;
+  color: #8fa0b5;
+  border-radius: 2px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  transition: all 0.2s ease;
+}
+
+.shape-btn i {
+  font-size: 0.95rem;
+}
+
+.shape-btn:hover {
+  color: var(--cyber-cyan);
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+.shape-btn.active {
+  color: var(--cyber-cyan);
+  border-color: var(--cyber-cyan);
+  background: rgba(0, 240, 255, 0.15);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+/* Colors Selection UI */
+.colors-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 2px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: var(--terminal-white);
+  box-shadow: 0 0 12px currentColor;
+  transform: scale(1.1);
+}
+
+.color-green { background-color: var(--matrix-green); color: var(--matrix-green); }
+.color-cyan { background-color: var(--cyber-cyan); color: var(--cyber-cyan); }
+.color-magenta { background-color: var(--hot-magenta); color: var(--hot-magenta); }
+.color-yellow { background-color: var(--laser-yellow); color: var(--laser-yellow); }
+.color-white { background-color: #ffffff; color: #ffffff; }
+
+.custom-color-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(12, 16, 22, 0.5);
+  padding: 8px 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(225, 232, 245, 0.05);
+  font-size: 0.75rem;
+  color: #5d6e85;
+}
+
+.picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.picker-wrapper span {
+  color: var(--terminal-white);
+  font-family: var(--font-mono);
+}
+
+#color-picker-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+#color-picker-input::-webkit-color-swatch {
+  border: 1px solid rgba(225, 232, 245, 0.2);
+  border-radius: 2px;
+}
+
+/* Dynamic Slider Custom Controls */
+.slider-container {
+  background: rgba(12, 16, 22, 0.5);
+  padding: 12px;
+  border-radius: 2px;
+  border: 1px solid rgba(225, 232, 245, 0.05);
+}
+
+.cyber-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--terminal-gray);
+  border-radius: 2px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.cyber-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 0; /* Retro blocky thumb */
+  background: var(--matrix-green);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--matrix-green);
+  transition: background-color 0.15s ease;
+}
+
+.cyber-slider::-webkit-slider-thumb:hover {
+  background: var(--cyber-cyan);
+  box-shadow: 0 0 8px var(--cyber-cyan);
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #5d6e85;
+}
+
+#brush-size-val {
+  color: var(--matrix-green);
+  font-weight: bold;
+}
+
+/* Operations Dock */
+.operations-dock {
+  margin-top: auto;
+  border-top: 1px solid rgba(225, 232, 245, 0.1);
+  padding-top: 15px;
+  gap: 8px;
+}
+
+.op-btn {
+  padding: 10px;
+  font-size: 0.8rem;
+}
+
+.alert-border {
+  border-color: rgba(255, 51, 102, 0.3) !important;
+}
+
+.alert-border:hover {
+  background: rgba(255, 51, 102, 0.15) !important;
+  color: var(--danger-red) !important;
+  border-color: var(--danger-red) !important;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.4) !important;
+}
+
+/* ---------------------------------------------------- */
+/* WEBCAM PREVIEW COMPONENT                             */
+/* ---------------------------------------------------- */
+#camera-deck {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 220px;
+  height: 165px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-color: rgba(0, 255, 102, 0.2);
+}
+
+.camera-header {
+  height: 28px;
+  background: rgba(5, 7, 10, 0.9);
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.15);
+}
+
+.pulse-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--matrix-green);
+  animation: camera-pulse 1.2s infinite alternate;
+}
+
+.camera-title {
+  font-size: 0.65rem;
+  color: var(--matrix-green);
+  font-weight: bold;
+}
+
+.video-wrapper {
+  flex-grow: 1;
+  position: relative;
+  background: #000;
+}
+
+/* CRITICAL: Mirrors webcam and tracking canvas for natural gestural control */
+#webcam, #skeleton-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+#skeleton-canvas {
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* ---------------------------------------------------- */
+/* TERMINAL DECK COMPONENT                              */
+/* ---------------------------------------------------- */
+#terminal-deck {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 360px;
+  height: 140px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-color: rgba(0, 240, 255, 0.2);
+}
+
+.terminal-header {
+  height: 28px;
+  background: rgba(5, 7, 10, 0.9);
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+.terminal-title {
+  font-size: 0.65rem;
+  color: var(--cyber-cyan);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.terminal-output {
+  flex-grow: 1;
+  padding: 10px;
+  background: rgba(3, 5, 8, 0.85);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #7ab8f0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Scrollbar styling for terminal */
+.terminal-output::-webkit-scrollbar {
+  width: 3px;
+}
+.terminal-output::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.2);
+}
+
+.term-line {
+  word-break: break-all;
+  line-height: 1.25;
+}
+
+.term-warn { color: var(--danger-red); }
+.term-success { color: var(--matrix-green); }
+.term-gesture { color: var(--laser-yellow); }
+
+/* ---------------------------------------------------- */
+/* FLOATING HELP DIALOG BUTTON                          */
+/* ---------------------------------------------------- */
+#btn-help-trigger {
+  position: absolute;
+  top: 20px;
+  right: 260px; /* Aligned beautifully with camera deck */
+  width: 38px;
+  height: 38px;
+  z-index: 100;
+  border-radius: 4px;
+  border-color: rgba(225, 232, 245, 0.15);
+  color: #8fa0b5;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.15rem;
+  transition: all 0.2s ease;
+}
+
+#btn-help-trigger:hover {
+  color: var(--cyber-cyan);
+  border-color: var(--cyber-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* ---------------------------------------------------- */
+/* CORE KEYFRAME ANIMATIONS                             */
+/* ---------------------------------------------------- */
+@keyframes pulse-terminal {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+@keyframes camera-pulse {
+  from { background-color: rgba(0, 255, 102, 0.2); box-shadow: 0 0 0px rgba(0, 255, 102, 0); }
+  to { background-color: var(--matrix-green); box-shadow: 0 0 8px var(--matrix-green); }
+}
+
+@keyframes pulse-neon-green {
+  0% { text-shadow: 0 0 2px rgba(0, 255, 102, 0.5); }
+  50% { text-shadow: 0 0 12px rgba(0, 255, 102, 0.9), 0 0 20px rgba(0, 255, 102, 0.4); }
+  100% { text-shadow: 0 0 2px rgba(0, 255, 102, 0.5); }
+}
+
+@keyframes pulse-neon-magenta {
+  0% { text-shadow: 0 0 2px rgba(255, 0, 127, 0.5); }
+  50% { text-shadow: 0 0 12px rgba(255, 0, 127, 0.9), 0 0 20px rgba(255, 0, 127, 0.4); }
+  100% { text-shadow: 0 0 2px rgba(255, 0, 127, 0.5); }
+}
+
+@keyframes pulse-neon-cyan {
+  0% { text-shadow: 0 0 2px rgba(0, 240, 255, 0.5); }
+  50% { text-shadow: 0 0 12px rgba(0, 240, 255, 0.9), 0 0 20px rgba(0, 240, 255, 0.4); }
+  100% { text-shadow: 0 0 2px rgba(0, 240, 255, 0.5); }
+}
+
+@keyframes typing-log {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* RESPONSIVE DOCK ADAPTATION */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 280px;
+    padding: 15px;
+    font-size: 0.9rem;
+  }
+  #camera-deck {
+    width: 180px;
+    height: 135px;
+  }
+  #terminal-deck {
+    width: 300px;
+    height: 120px;
+  }
+  #btn-help-trigger {
+    right: 220px;
+  }
+}
