@@ -1217,7 +1217,49 @@ function bindUIElements() {
     // Fire up webcam stream & AI Hands parser
     setupAIHandTracker();
   });
-}
+
+  // 9. MOBILE SIDEBAR TOGGLE (hamburger button)
+  const sidebarToggleBtn = document.getElementById('btn-sidebar-toggle');
+  const sidebarEl = document.querySelector('.sidebar');
+  const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+  const toggleIcon = document.getElementById('toggle-icon');
+
+  function openMobileSidebar() {
+    sidebarEl.classList.add('mobile-open');
+    sidebarBackdrop.classList.add('active');
+    toggleIcon.className = 'fa-solid fa-xmark';
+  }
+
+  function closeMobileSidebar() {
+    sidebarEl.classList.remove('mobile-open');
+    sidebarBackdrop.classList.remove('active');
+    toggleIcon.className = 'fa-solid fa-bars';
+  }
+
+  sidebarToggleBtn.addEventListener('click', () => {
+    if (sidebarEl.classList.contains('mobile-open')) {
+      closeMobileSidebar();
+    } else {
+      openMobileSidebar();
+    }
+  });
+
+  // Tap backdrop to close sidebar
+  sidebarBackdrop.addEventListener('click', () => {
+    closeMobileSidebar();
+  });
+
+  // Auto-close sidebar when a tool/color/shape button is tapped on mobile
+  document.querySelectorAll('.tool-btn, .color-swatch, .shape-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Only close on mobile (when toggle button is visible)
+      if (window.getComputedStyle(sidebarToggleBtn).display !== 'none') {
+        closeMobileSidebar();
+      }
+    });
+  });
+
+} // end bindUIElements
 
 // ----------------------------------------------------
 // WEBCAM & MEDIAPIPE PIPELINE SETUP

@@ -39,6 +39,8 @@ body, html {
   background-color: var(--terminal-black);
   color: var(--terminal-white);
   font-family: var(--font-sans);
+  /* prevent pull-to-refresh and browser swipe gestures */
+  overscroll-behavior: none;
 }
 
 /* Monospace overrides for hacker feel */
@@ -127,8 +129,10 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
   z-index: 10000;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .boot-container {
@@ -361,10 +365,14 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
 .sidebar-scrollable {
   flex-grow: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding-right: 5px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
+  overscroll-behavior: contain;       /* prevent body scroll when sidebar hits edge */
+  touch-action: pan-y;                /* allow vertical touch scroll in sidebar */
 }
 
 /* Custom Scrollbar for Hacker HUD */
@@ -810,6 +818,50 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
 }
 
 /* ---------------------------------------------------- */
+/* MOBILE HAMBURGER TOGGLE BUTTON                       */
+/* ---------------------------------------------------- */
+#btn-sidebar-toggle {
+  display: none; /* Hidden on desktop */
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 38px;
+  height: 38px;
+  z-index: 200;
+  border-radius: 4px;
+  border-color: rgba(0, 255, 102, 0.3);
+  color: var(--matrix-green);
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: rgba(5, 7, 10, 0.9);
+}
+
+#btn-sidebar-toggle:hover {
+  background: rgba(0, 255, 102, 0.15);
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.3);
+}
+
+/* Backdrop overlay when sidebar is open on mobile */
+#sidebar-backdrop {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 149;
+  backdrop-filter: blur(2px);
+}
+
+#sidebar-backdrop.active {
+  display: block;
+}
+
+/* ---------------------------------------------------- */
 /* LANDSCAPE ORIENTATION PROMPT                         */
 /* ---------------------------------------------------- */
 #landscape-prompt {
@@ -924,76 +976,94 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
 /* RESPONSIVE - MOBILE LANDSCAPE                        */
 /* ---------------------------------------------------- */
 @media (max-width: 900px) and (orientation: landscape) {
-  /* Sidebar becomes a thin collapsible strip */
+
+  /* Show hamburger toggle button */
+  #btn-sidebar-toggle {
+    display: flex;
+  }
+
+  /* SIDEBAR: hidden off-screen by default, slides in when .mobile-open */
   .sidebar {
-    width: 200px;
-    top: 10px;
-    left: 10px;
-    bottom: 10px;
-    padding: 10px;
+    width: 240px;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    padding: 14px 12px;
     gap: 8px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
+    border-radius: 0;
+    z-index: 150;
+    /* Slide out to the left */
+    transform: translateX(-110%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* When toggled open */
+  .sidebar.mobile-open {
+    transform: translateX(0);
   }
 
   .brand-title {
-    font-size: 0.95rem;
+    font-size: 1rem;
   }
 
   .brand-sub {
-    font-size: 0.6rem;
+    font-size: 0.62rem;
   }
 
   .sidebar-scrollable {
     gap: 10px;
+    /* Ensure full scroll height fills sidebar */
+    max-height: calc(100vh - 100px);
   }
 
   .section-title {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
   }
 
   .tools-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    gap: 6px;
   }
 
   .tool-btn {
-    padding: 6px 3px;
-    font-size: 0.6rem;
+    padding: 8px 4px;
+    font-size: 0.65rem;
   }
 
   .tool-btn i {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
 
   .shapes-grid {
     grid-template-columns: repeat(5, 1fr);
-    gap: 3px;
+    gap: 4px;
   }
 
   .shape-btn {
-    padding: 5px 2px;
-    font-size: 0.55rem;
+    padding: 6px 2px;
+    font-size: 0.6rem;
   }
 
   .color-swatch {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
   }
 
   .cyber-btn {
-    padding: 8px 12px;
-    font-size: 0.72rem;
+    padding: 9px 12px;
+    font-size: 0.75rem;
   }
 
   .op-btn {
-    padding: 7px;
-    font-size: 0.68rem;
+    padding: 8px;
+    font-size: 0.7rem;
   }
 
   /* Camera deck: top-right, compact */
   #camera-deck {
-    width: 150px;
-    height: 110px;
+    width: 155px;
+    height: 115px;
     top: 10px;
     right: 10px;
   }
@@ -1008,17 +1078,20 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
 
   /* Terminal: bottom-right, compact */
   #terminal-deck {
-    width: 230px;
-    height: 100px;
+    width: 240px;
+    height: 105px;
     bottom: 10px;
     right: 10px;
   }
 
-  /* Status bar: top center, smaller */
+  /* Status bar: top center - shift right to avoid toggle button */
   #gesture-status-bar {
     top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
     padding: 6px 14px;
     gap: 8px;
+    margin-left: 20px; /* slight offset so it clears the toggle btn */
   }
 
   .status-label {
@@ -1029,23 +1102,36 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
     font-size: 0.85rem;
   }
 
-  /* Help button */
+  /* Help button: move to safe position */
   #btn-help-trigger {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     font-size: 0.9rem;
     top: 10px;
-    right: 170px;
+    right: 175px;
   }
 
-  /* Boot screen adjustments */
+  /* Boot screen: scrollable on landscape mobile */
+  .boot-screen {
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;
+  }
+
   .boot-container {
-    padding: 16px;
+    padding: 14px;
     max-width: 95vw;
+    margin: auto; /* center vertically if content fits */
   }
 
   .boot-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+  }
+
+  .boot-subtitle {
+    font-size: 0.75rem;
+    margin-bottom: 12px;
   }
 
   .gesture-grid {
@@ -1069,16 +1155,17 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
   }
 
   .boot-log {
-    height: 80px;
+    height: 75px;
     font-size: 0.7rem;
+    margin-bottom: 12px;
   }
 }
 
 /* Extra small landscape (phones like 667px wide) */
 @media (max-width: 700px) and (orientation: landscape) {
   .sidebar {
-    width: 170px;
-    padding: 8px;
+    width: 220px;
+    padding: 10px;
   }
 
   #camera-deck {
@@ -1089,23 +1176,15 @@ h1, h2, h3, .brand, .terminal-output, .status-value, .cyber-btn, .tool-btn span,
   #terminal-deck {
     width: 200px;
     height: 90px;
+  }
+
+  .terminal-output {
     font-size: 0.62rem;
   }
 
-  .tools-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .tool-btn span {
-    display: none; /* hide text labels, keep icons only */
-  }
-
-  .tool-btn {
-    padding: 7px 4px;
-  }
-
   #btn-help-trigger {
-    right: 148px;
+    right: 150px;
   }
 }
+
 
